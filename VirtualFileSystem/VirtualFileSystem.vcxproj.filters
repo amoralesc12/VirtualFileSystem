@@ -21,12 +21,18 @@
     <ClInclude Include="MapaBits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FileDirectory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MetaData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MapaBits.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileDirectory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

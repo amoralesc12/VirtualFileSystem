@@ -139,10 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FileDirectory.h" />
     <ClInclude Include="MapaBits.h" />
     <ClInclude Include="MetaData.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="FileDirectory.cpp" />
     <ClCompile Include="MapaBits.cpp" />
     <ClCompile Include="MetaData.cpp" />
   </ItemGroup>
