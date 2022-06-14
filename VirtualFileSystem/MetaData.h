@@ -27,7 +27,7 @@ public:
 	MetaData* meta;
 	MapaBits* bits;
 	
-	crearDisco(int, const char*);
+	void crearDisco(int, const char*);
 
 
 	char* toChar();
