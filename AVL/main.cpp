@@ -1,278 +1,267 @@
 #include <iostream>
 using namespace std;
-
+//ARREGLAR POSORDEN Y PREORDEN 
+//AGREGAR INORDEN
 struct node {
-    int data{};
-    node* left = nullptr;
-    node* right = nullptr;
-    node* parent = nullptr;
-    int height;
+    int elemento{};
+    node* izquierda = nullptr;
+    node* derecha = nullptr;
+    node* padre = nullptr;
+    int altura;
 };
 
-class AVL_SEARCH_TREE {
+class AVL {
 
-    node* root;
+    node* raiz;
 
 public:
-    AVL_SEARCH_TREE() : root(nullptr) {}
+    AVL() : raiz(nullptr) {}
 
-    node* GetRoot() { return root; }
+    node* GetRaiz() { return raiz; }
 
     int max(int a, int b) { return (a > b ? a : b); }
 
-    void InsertNode(int stuff) {
-        if (root == nullptr) {
-            root = new node();
-            root->data = stuff;
-            cout << "Element inserted.\n";
-            root->height = 0;
-            root->parent = nullptr;
+    void Insertar(int _elemento) {
+        if (raiz == nullptr) {
+            raiz = new node();
+            raiz->elemento = _elemento;
+            cout << "Elemento agregado!.\n";
+            raiz->altura = 0;
+            raiz->padre = nullptr;
         }
         else {
-            auto linker = GetRoot();
-            node* newnode = new node();
-            newnode->data = stuff;
+            auto aux = GetRaiz();
+            node* nuevo = new node();
+            nuevo->elemento = _elemento;
 
-            while (linker != nullptr) {
-                if (linker->data > stuff) {
-                    if (linker->left == nullptr) {
-                        linker->left = newnode;
-                        newnode->height = 0;
-                        newnode->parent = linker;
-                        cout << "Element inserted.\n"; break;
+            while (aux != nullptr) {
+                if (aux->elemento > _elemento) {
+                    if (aux->izquierda == nullptr) {
+                        aux->izquierda = nuevo;
+                        nuevo->altura = 0;
+                        nuevo->padre = aux;
+                        cout << "Elemento agregado!.\n"; break;
                     }
-                    else { linker = linker->left; }
+                    else { aux = aux->izquierda; }
                 }
                 else {
-                    if (linker->right == nullptr) {
-                        linker->right = newnode;
-                        newnode->height = 0;
-                        newnode->parent = linker;
-                        cout << "Element inserted.\n"; break;
+                    if (aux->derecha == nullptr) {
+                        aux->derecha = nuevo;
+                        nuevo->altura = 0;
+                        nuevo->padre = aux;
+                        cout << "Elemento agregado!.\n"; break;
                     }
-                    else { linker = linker->right; }
+                    else { aux = aux->derecha; }
                 }
             }
-            Rebalancer(newnode);
+            Rebalancer(nuevo);
         }
     }
 
-    int GetHeight(node* temp) { return ((temp == nullptr) ? -1 : temp->height); }
+    int GetAltura(node* temp) { return ((temp == nullptr) ? -1 : temp->altura); }
 
-    int BalanceFactor(node* temp) { return (GetHeight(temp->right) - GetHeight(temp->left)); }
+    int Factor_equilibrio(node* temp) { return (GetAltura(temp->derecha) - GetAltura(temp->izquierda)); }
 
-    void HeightBalance(node* temp) {
+    void Altura_eq(node* temp) {
         int l = -1, r = -1;
-        if (temp->left) { l = temp->left->height; }
-        if (temp->right) { r = temp->right->height; }
-        temp->height = max(l, r) + 1;
+        if (temp->izquierda) { l = temp->izquierda->altura; }
+        if (temp->derecha) { r = temp->derecha->altura; }
+        temp->altura = max(l, r) + 1;
     }
 
-    void TreeFix(node* temp) {
-        if (BalanceFactor(temp) == 2) {
-            if (BalanceFactor(temp->right) < 0) { RightRotate(temp->right); }
-            LeftRotate(temp);
-            HeightBalance(temp);
+    void Arreglar_Arbol(node* temp) {
+        if (Factor_equilibrio(temp) == 2) {
+            if (Factor_equilibrio(temp->derecha) < 0) { Rotacion_derecha(temp->derecha); }
+            Rotacion_izquierda(temp);
+            Altura_eq(temp);
         }
-        else if (BalanceFactor(temp) == -2) {
-            if (BalanceFactor(temp->left) > 0) { LeftRotate(temp->left); }
-            RightRotate(temp);
-            HeightBalance(temp);
+        else if (Factor_equilibrio(temp) == -2) {
+            if (Factor_equilibrio(temp->izquierda) > 0) { Rotacion_izquierda(temp->izquierda); }
+            Rotacion_derecha(temp);
+            Altura_eq(temp);
         }
     }
 
     void Rebalancer(node* temp) {
-        if (temp == root) { TreeFix(root); }
+        if (temp == raiz) { Arreglar_Arbol(raiz); }
         else {
             while (temp != nullptr) {
-                HeightBalance(temp);
-                temp = temp->parent;
-                if (temp) { TreeFix(temp); }
+                Altura_eq(temp);
+                temp = temp->padre;
+                if (temp) { Arreglar_Arbol(temp); }
             }
         }
     }
 
-    void LeftRotate(node* x) {
-        node* nw_node = new node();
-        if (x->right->left) { nw_node->right = x->right->left; }
-        nw_node->left = x->left;
-        nw_node->data = x->data;
-        x->data = x->right->data;
+    void Rotacion_izquierda(node* nodo) {
+        node* nuevo = new node();
+        if (nodo->derecha->izquierda) { nuevo->derecha = nodo->derecha->izquierda; }
+        nuevo->izquierda = nodo->izquierda;
+        nuevo->elemento = nodo->elemento;
+        nodo->elemento = nodo->derecha->elemento;
 
-        x->left = nw_node;
-        if (nw_node->left) { nw_node->left->parent = nw_node; }
-        if (nw_node->right) { nw_node->right->parent = nw_node; }
-        nw_node->parent = x;
+        nodo->izquierda = nuevo;
+        if (nuevo->izquierda) { nuevo->izquierda->padre = nuevo; }
+        if (nuevo->derecha) { nuevo->derecha->padre = nuevo; }
+        nuevo->padre = nodo;
 
-        if (x->right->right) { x->right = x->right->right; }
-        else { x->right = nullptr; }
+        if (nodo->derecha->derecha) { nodo->derecha = nodo->derecha->derecha; }
+        else { nodo->derecha = nullptr; }
 
-        if (x->right) { x->right->parent = x; }
+        if (nodo->derecha) { nodo->derecha->padre = nodo; }
 
-        HeightBalance(x->left);
-        if (x->right) { HeightBalance(x->right); }
-        HeightBalance(x);
+        Altura_eq(nodo->izquierda);
+        if (nodo->derecha) { Altura_eq(nodo->derecha); }
+        Altura_eq(nodo);
     }
 
-    void RightRotate(node* x) {
-        node* nw_node = new node();
-        if (x->left->right) { nw_node->left = x->left->right; }
-        nw_node->right = x->right;
-        nw_node->data = x->data;
-        x->data = x->left->data;
+    void Rotacion_derecha(node* nodo) {
+        node* nuevo = new node();
+        if (nodo->izquierda->derecha) { nuevo->izquierda = nodo->izquierda->derecha; }
+        nuevo->derecha = nodo->derecha;
+        nuevo->elemento = nodo->elemento;
+        nodo->elemento = nodo->izquierda->elemento;
 
-        x->right = nw_node;
-        if (nw_node->left) { nw_node->left->parent = nw_node; }
-        if (nw_node->right) { nw_node->right->parent = nw_node; }
-        nw_node->parent = x;
+        nodo->derecha = nuevo;
+        if (nuevo->izquierda) { nuevo->izquierda->padre = nuevo; }
+        if (nuevo->derecha) { nuevo->derecha->padre = nuevo; }
+        nuevo->padre = nodo;
 
-        if (x->left->left) { x->left = x->left->left; }
-        else { x->left = nullptr; }
+        if (nodo->izquierda->izquierda) { nodo->izquierda = nodo->izquierda->izquierda; }
+        else { nodo->izquierda = nullptr; }
 
-        if (x->left) { x->left->parent = x; }
+        if (nodo->izquierda) { nodo->izquierda->padre = nodo; }
 
-        HeightBalance(x->right);
-        if (x->left) { HeightBalance(x->left); }
-        HeightBalance(x);
+        Altura_eq(nodo->derecha);
+        if (nodo->izquierda) { Altura_eq(nodo->izquierda); }
+        Altura_eq(nodo);
     }
 
-    node* TreeSearch(int stuff) {
-        auto temp = GetRoot();
-        if (temp == nullptr) { return nullptr; }
-
-        while (temp) {
-            if (stuff == temp->data) { return temp; }
-            else if (stuff < temp->data) { temp = temp->left; }
-            else { temp = temp->right; }
-        }
-        return nullptr;
-    }
-
-    void PreorderTraversal(node* temp) {
+  
+    void PreoOrder(node* temp) {
         if (temp == nullptr) { return; }
-        cout << "->" << temp->data;
-        PreorderTraversal(temp->left);
-        PreorderTraversal(temp->right);
+        cout << "->" << temp->elemento;
+        PreoOrder(temp->izquierda);
+        PreoOrder(temp->derecha);
     }
 
-    void PostorderTraversal(node* temp) {
+    void PostOrder(node* temp) {
         if (temp == nullptr) { return; }
-        PostorderTraversal(temp->left);
-        PostorderTraversal(temp->right);
-        cout << "->" << temp->data;
+        PostOrder(temp->izquierda);
+        PostOrder(temp->derecha);
+        cout << "->" << temp->elemento;
     }
 
-    void RemoveNode(node* Parent, node* curr, int stuff) {
-        if (curr == nullptr) { return; }
-        if (curr->data == stuff) {
+    void RemoverNodo(node* _Parent, node* nodo, int _elemento) {
+        if (nodo == nullptr) { return; }
+        if (nodo->elemento == _elemento) {
             //CASE -- 1
-            if (curr->left == nullptr && curr->right == nullptr) {
-                if (Parent->data == curr->data) { root = nullptr; }
-                else if (Parent->right == curr) { Parent->right = nullptr; }
-                else { Parent->left = nullptr; }
-                Rebalancer(Parent);
+            if (nodo->izquierda == nullptr && nodo->derecha == nullptr) {
+                if (_Parent->elemento == nodo->elemento) { raiz = nullptr; }
+                else if (_Parent->derecha == nodo) { _Parent->derecha = nullptr; }
+                else { _Parent->izquierda = nullptr; }
+                Rebalancer(_Parent);
             }
             //CASE -- 2
-            else if (curr->left != nullptr && curr->right == nullptr) {
-                int sp = curr->data;
-                curr->data = curr->left->data;
-                curr->left->data = sp;
-                RemoveNode(curr, curr->left, stuff);
+            else if (nodo->izquierda != nullptr && nodo->derecha == nullptr) {
+                int sp = nodo->elemento;
+                nodo->elemento = nodo->izquierda->elemento;
+                nodo->izquierda->elemento = sp;
+                RemoverNodo(nodo, nodo->izquierda, _elemento);
             }
-            else if (curr->left == nullptr && curr->right != nullptr) {
-                int sp = curr->data;
-                curr->data = curr->right->data;
-                curr->right->data = sp;
-                RemoveNode(curr, curr->right, stuff);
+            else if (nodo->izquierda == nullptr && nodo->derecha != nullptr) {
+                int sp = nodo->elemento;
+                nodo->elemento = nodo->derecha->elemento;
+                nodo->derecha->elemento = sp;
+                RemoverNodo(nodo, nodo->derecha, _elemento);
             }
             //CASE -- 3
             else {
-                node* temp = curr->right;
+                node* temp = nodo->derecha;
                 int flag = 0;
-                while (temp->left) { flag = 1; Parent = temp; temp = temp->left; }
-                if (!flag) { Parent = curr; }
-                int sp = curr->data;
-                curr->data = temp->data;
-                temp->data = sp;
-                RemoveNode(Parent, temp, temp->data);
+                while (temp->izquierda) { flag = 1; _Parent = temp; temp = temp->izquierda; }
+                if (!flag) { _Parent = nodo; }
+                int sp = nodo->elemento;
+                nodo->elemento = temp->elemento;
+                temp->elemento = sp;
+                RemoverNodo(_Parent, temp, temp->elemento);
             }
         }
     }
 
-    void Remove(int stuff) {
-        auto temp = root;
-        auto Parent = temp;
+    void Remover_Prin(int _elemento) {
+        auto temp = raiz;
+        auto _Parent = temp;
         bool flag = false;
-        if (temp == nullptr) { RemoveNode(nullptr, nullptr, stuff); }
+        if (temp == nullptr) { RemoverNodo(nullptr, nullptr, _elemento); }
 
         while (temp) {
-            if (stuff == temp->data) { flag = true; RemoveNode(Parent, temp, stuff); break; }
-            else if (stuff < temp->data) { Parent = temp; temp = temp->left; }
-            else { Parent = temp; temp = temp->right; }
+            if (_elemento == temp->elemento) { flag = true; RemoverNodo(_Parent, temp, _elemento); break; }
+            else if (_elemento < temp->elemento) { _Parent = temp; temp = temp->izquierda; }
+            else { _Parent = temp; temp = temp->derecha; }
         }
 
-        if (!flag) { cout << "Element doesn't exist in the table\n"; }
-        else { cout << "Element removed.\n"; }
+        if (!flag) { cout << "Elemento no existe!\n"; }
+        else { cout << "Element eliminado!\n"; }
     }
 };
 
 void menu() {
-    cout << "\n__________________________________________";
-    cout << "\n\n  --HEIGHT BALANCED BINARY SEARCH TREE--";
+
     cout << "\n                --(AVL)--";
     cout << "\n__________________________________________";
-    cout << "\n\n1. Insert elements into the tree.";
-    cout << "\n2. Get Tree Height.";
-    cout << "\n3. Search for an element.";
-    cout << "\n4. PRE-ORDER Tree-Walk.";
-    cout << "\n5. POST-ORDER Tree-Walk.";
-    cout << "\n6. Remove an element from the tree.";
-    cout << "\n7. Exit.";
+    cout << "\n\n1. Insertar elementos en el arbol";
+    cout << "\n2. Obtener altura del arbol";
+    cout << "\n3. PRE-ORDER";
+    cout << "\n4. POST-ORDER.";
+    cout << "\n5. Remover elemento del arbol";
+    cout << "\n6. SALIR.";
     cout << "\n__________________________________________";
-    cout << "\nYour Choice -- ";
+    cout << "\nOpcion Elegida -- ";
 }
 
-int main() {
-    AVL_SEARCH_TREE demo;
-    int info, input;
+int main() 
+{
+    AVL demo;
+    int info, input, in;
     menu();
     cin >> info;
     while (info != 7) {
         switch (info) {
-        case 1: cout << "\nElement to be inserted -- ";
-            cin >> input; demo.InsertNode(input);
+        case 1: cout << "\nCantidad de elementos para el arbol -- ";
+            cin >> in;
+            for (int i = 0; i < in; i++)
+            {
+                cout << "Insertar Elemento: ";
+                cin >> input; demo.Insertar(input);
+            }
+            cin >> input; demo.Insertar(input);
             break;
 
-        case 2: cout << "Height of the Tree -> ";
-            cout << demo.GetHeight(demo.GetRoot()) + 1 << endl;
+        case 2: cout << "Altura del arbol -> ";
+            cout << demo.GetAltura(demo.GetRaiz()) + 1 << endl;
             break;
 
-        case 3: cout << "\nElement to be searched -- ";
-            cin >> input;
-            if (demo.TreeSearch(input)) { cout << "Element found.\n"; }
-            else { cout << "Element not found.\n"; }
-            break;
-
-        case 4: cout << "Pre-Order Tree Walk ";
-            demo.PreorderTraversal(demo.GetRoot());
+        case 3: cout << "Pre-Order";
+            demo.PreoOrder(demo.GetRaiz());
             cout << endl;
             break;
 
-        case 5: cout << "Post-Order Tree Walk ";
-            demo.PostorderTraversal(demo.GetRoot());
+        case 4: cout << "Post-Order";
+            demo.PostOrder(demo.GetRaiz());
             cout << endl;
             break;
 
-        case 6: cout << "\nElement to be deleted? -- ";
+        case 5: cout << "\n elemento que desea eliminar? -- ";
             cin >> input;
-            demo.Remove(input);
+            demo.Remover_Prin(input);
             break;
 
-        default: cout << "Wrong Choice.\n";
+        default: cout << "Opcion Incorrecta.\n";
         }
-        cout << "\nAnything Else?";
+        cout << "\nOtra opcion?";
         cin >> info;
     }
-    cout << "\nTerminating.... ";
+    cout << "\nCerrando.... ";
     return 0;
-}
+    }
