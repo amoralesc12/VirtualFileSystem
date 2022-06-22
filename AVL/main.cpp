@@ -54,13 +54,27 @@ public:
                     else { aux = aux->derecha; }
                 }
             }
-            Rebalancer(nuevo);
+            Balance2(nuevo);
         }
     }
-
     int GetAltura(node* temp) { return ((temp == nullptr) ? -1 : temp->altura); }
 
-    int Factor_equilibrio(node* temp) { return (GetAltura(temp->derecha) - GetAltura(temp->izquierda)); }
+    int Factor_equilibrio(node* temp)
+    { 
+        int left, right;
+        if (temp == nullptr)
+            return (0);
+        if (temp->izquierda == nullptr)
+            left = 0;
+        else
+            left = 1 + temp->izquierda->altura;
+        if (temp->derecha == nullptr)
+
+            right = 0;
+        else
+            right = 1 + temp->derecha->altura;
+        return (left - right);
+    }
 
     void Altura_eq(node* temp) {
         int l = -1, r = -1;
@@ -69,7 +83,7 @@ public:
         temp->altura = max(l, r) + 1;
     }
 
-    void Arreglar_Arbol(node* temp) {
+    void Balance1(node* temp) { // Balance 1 Arreglar Arbol funcion donde se realizan las rotaciones
         if (Factor_equilibrio(temp) == 2) {
             if (Factor_equilibrio(temp->derecha) < 0) { Rotacion_derecha(temp->derecha); }
             Rotacion_izquierda(temp);
@@ -82,13 +96,13 @@ public:
         }
     }
 
-    void Rebalancer(node* temp) {
-        if (temp == raiz) { Arreglar_Arbol(raiz); }
+    void Balance2(node* temp) { // funcion que llama balance 1 para usar en las funciones
+        if (temp == raiz) { Balance1(raiz); }
         else {
             while (temp != nullptr) {
                 Altura_eq(temp);
                 temp = temp->padre;
-                if (temp) { Arreglar_Arbol(temp); }
+                if (temp) { Balance1(temp); }
             }
         }
     }
@@ -140,7 +154,7 @@ public:
   
     void PreoOrder(node* temp) {
         if (temp == nullptr) { return; }
-        cout << "->" << temp->elemento;
+        cout   << temp->elemento << "  " << Factor_equilibrio(temp) << "\n";
         PreoOrder(temp->izquierda);
         PreoOrder(temp->derecha);
     }
@@ -149,7 +163,16 @@ public:
         if (temp == nullptr) { return; }
         PostOrder(temp->izquierda);
         PostOrder(temp->derecha);
-        cout << "->" << temp->elemento;
+        cout << temp->elemento << "  " << Factor_equilibrio(temp) << "\n";
+    }
+
+    void InOrder(node* temp)
+    {
+        if (temp == nullptr) { return; }
+        InOrder(temp->izquierda);
+        cout << temp->elemento << "  " << Factor_equilibrio(temp) << "\n";
+        InOrder(temp->derecha);
+
     }
 
     void RemoverNodo(node* _Parent, node* nodo, int _elemento) {
@@ -160,7 +183,7 @@ public:
                 if (_Parent->elemento == nodo->elemento) { raiz = nullptr; }
                 else if (_Parent->derecha == nodo) { _Parent->derecha = nullptr; }
                 else { _Parent->izquierda = nullptr; }
-                Rebalancer(_Parent);
+                Balance2(_Parent);
             }
             //CASE -- 2
             else if (nodo->izquierda != nullptr && nodo->derecha == nullptr) {
@@ -214,8 +237,9 @@ void menu() {
     cout << "\n2. Obtener altura del arbol";
     cout << "\n3. PRE-ORDER";
     cout << "\n4. POST-ORDER.";
-    cout << "\n5. Remover elemento del arbol";
-    cout << "\n6. SALIR.";
+    cout << "\n5. IN-ORDER.";
+    cout << "\n6. Remover elemento del arbol";
+    cout << "\n7. SALIR.";
     cout << "\n__________________________________________";
     cout << "\nOpcion Elegida -- ";
 }
@@ -223,36 +247,39 @@ void menu() {
 int main() 
 {
     AVL demo;
-    int info, input, in;
+    int info, input, n;
     menu();
     cin >> info;
     while (info != 7) {
         switch (info) {
         case 1: cout << "\nCantidad de elementos para el arbol -- ";
-            cin >> in;
-            for (int i = 0; i < in; i++)
+            cin >> n;
+            for (int i = 0; i < n; i++)
             {
                 cout << "Insertar Elemento: ";
                 cin >> input; demo.Insertar(input);
             }
-            cin >> input; demo.Insertar(input);
             break;
 
         case 2: cout << "Altura del arbol -> ";
             cout << demo.GetAltura(demo.GetRaiz()) + 1 << endl;
             break;
 
-        case 3: cout << "Pre-Order";
+        case 3: cout << "Pre-Order:\n";
             demo.PreoOrder(demo.GetRaiz());
             cout << endl;
             break;
 
-        case 4: cout << "Post-Order";
+        case 4: cout << "Post-Order:\n";
             demo.PostOrder(demo.GetRaiz());
             cout << endl;
             break;
 
-        case 5: cout << "\n elemento que desea eliminar? -- ";
+        case 5:cout << "In-Order:\n";
+            demo.InOrder(demo.GetRaiz());
+            cout << endl;
+            break;
+        case 6: cout << "\n elemento que desea eliminar? -- ";
             cin >> input;
             demo.Remover_Prin(input);
             break;
