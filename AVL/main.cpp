@@ -24,7 +24,7 @@ int main()
     int info, in, n;
     menu();
     cin >> info;
-    while (info != 7) {
+    while (info != 8) {
         switch (info) {
         case 1: cout << "\nCantidad de elementos para el arbol -- ";
             cin >> n;
@@ -62,9 +62,10 @@ int main()
             cin >> in;
             if (avl.Busqueda_Arbol(in)) { cout << "Elemento econtrado!\n"; }
             else { cout << "Elemento no econtrado.\n"; }
+            break;
 
-
-        default: cout << "Opcion Incorrecta.\n";
+        case 8: cout << "Opcion Incorrecta.\n";
+            break;
         }
         cout << "\nOtra opcion?";
         cin >> info;
