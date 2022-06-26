@@ -10,25 +10,25 @@ Block::Block(uint32_t nIndexIn, const string& sDataIn) : _nIndex(nIndexIn), _sDa
     sHash = _CalculateHash();
 }
 
-//void Block::MineBlock(uint32_t nDifficulty)
-//{
-//    const cstr[nDifficulty + 1];
-//    for (uint32_t i = 0; i < nDifficulty; ++i)
-//    {
-//        cstr[i] = '0';
-//    }
-//    cstr[nDifficulty] = '\0';
-//
-//    string str(cstr);
-//
-//    do
-//    {
-//        _nNonce++;
-//        sHash = _CalculateHash();
-//    } while (sHash.substr(0, nDifficulty) != str);
-//
-//    cout << "Block mined: " << sHash << endl;
-//}
+void Block::MineBlock(uint32_t nDifficulty)
+{
+   const cstr[nDifficulty + 1];
+    for (uint32_t i = 0; i < nDifficulty; ++i)
+    {
+       cstr[i] = '0';
+    }
+    cstr[nDifficulty] = '\0';
+
+    string str(cstr);
+
+    do
+    {
+        _nNonce++;
+        sHash = _CalculateHash();
+    } while (sHash.substr(0, nDifficulty) != str);
+
+    cout << "Block mined: " << sHash << endl;
+}
 
 inline string Block::_CalculateHash() const
 {

@@ -11,7 +11,7 @@ using namespace std;
 
     node* raiz;
 
-operaciones:: operaciones():  raiz(nullptr) {}
+    operaciones:: operaciones():  raiz(nullptr) {}
 
     node*  operaciones:: GetRaiz() {  return raiz; }
 
